@@ -7,7 +7,7 @@ const player1 = {
     weapon: 'Sweet Voice',
     img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
     attack: function (name) {
-        console.log(name + ' ' + 'Fight...')
+        console.log(name + ' Fight...')
     }
 }
 
@@ -19,7 +19,7 @@ const player2 = {
     weapon: 'Round videos in Telegram',
     img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
     attack: function (name) {
-        console.log(name + ' ' + 'Fight...')
+        console.log(name + ' Fight...')
     }
 }
 
@@ -63,10 +63,9 @@ player2.attack(player2.name);
 // createPlayer();
 
 // task #2
-
-// function createPlayerTask2(player, name, hp, img) {
+// const $arenas = document.querySelector('.arenas');
 //
-//     const $arenas = document.querySelector('.arenas');
+// function createPlayerTask2(player, name, hp, img) {
 //
 //     const $player1 = document.createElement('div');
 //     $player1.classList.add(player);
@@ -100,9 +99,9 @@ player2.attack(player2.name);
 
 // task #3
 
-function createPlayerTask3(player, playerObject) {
+const $arenas = document.querySelector('.arenas');
 
-    const $arenas = document.querySelector('.arenas');
+function createPlayerTask3(player, playerObject) {
 
     const $player = document.createElement('div');
     $player.classList.add(player);
@@ -136,6 +135,7 @@ function createPlayerTask3(player, playerObject) {
 
     $arenas.appendChild($player);
 }
+
 
 createPlayerTask3('player1', player1);
 createPlayerTask3('player2', player2);
