@@ -5,27 +5,29 @@ const player1 = {
     player: 1,
     name: 'Weekend',
     hp: 100,
+    changeHP: changeHP,
+    elHP: elHP,
+    renderHP: renderHP,
     weapon: 'Sweet Voice',
     img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
-    attack: function (name) {
-        console.log(name + ' Fight...')
-    }
+    attack: attack,
 }
-
-player1.attack(player1.name);
 
 const player2 = {
     player: 2,
-    name: 'ZarMarathon',
+    name: 'Zar',
     hp: 100,
+    changeHP: changeHP,
+    elHP: elHP,
+    renderHP: renderHP,
     weapon: 'Round videos in Telegram',
     img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
-    attack: function (name) {
-        console.log(name + ' Fight...')
-    }
+    attack: attack,
 }
 
-player2.attack(player2.name);
+function attack() {
+    return this.name + ' Fight...';
+}
 
 function createElement(tag, className) {
     const $tag = document.createElement(tag);
@@ -40,8 +42,6 @@ function createPlayer(playerObject) {
     const $progressbar = createElement('div', 'progressbar');
     const $character = createElement('div', 'character');
     const $life = createElement('div', 'life');
-    const $damage = createElement('div', 'damage');
-    const $probability = createElement('div', 'probability');
     const $name = createElement('div', 'name');
     const $img = createElement('img');
 
@@ -54,48 +54,82 @@ function createPlayer(playerObject) {
 
     $character.appendChild($img);
 
-    $player.append($progressbar, $character, $damage, $probability);
+    $player.append($progressbar, $character);
 
     return $player;
 }
 
-
-function changeHP(player) {
-    const $playerLife = document.querySelector('.player' + player.player + ' .life');
-    player.hp -= Math.floor(Math.random() * 20);
-
-    if (player.hp <= 0) {
-        player.hp = 0;
-    }
-
-    $playerLife.style.width = player.hp + '%';
+function getRandom(number) {
+    return Math.floor(Math.random() * number);
 }
 
-function playerLose(name) {
+function changeHP(valueHP) {
+    this.hp -= getRandom(valueHP);
+    if (this.hp <= 0) {
+        this.hp = 0;
+    }
+    return this.hp
+}
+
+function elHP() {
+    return document.querySelector('.player' + this.player + ' .life');
+}
+
+function renderHP() {
+    (this.elHP()).style.width = this.hp + '%';
+}
+
+function playerWins(name) {
     const $loseTitle = createElement('div', 'loseTitle');
-    $loseTitle.innerText = name + ' Win';
+    if (name) {
+        $loseTitle.innerText = name + ' Wins';
+    } else {
+        $loseTitle.innerText = 'Draw';
+    }
     return $loseTitle;
 }
 
+function createReloadButton() {
+    const $reloadWrap = createElement('div','reloadWrap');
+    const $button = document.querySelector('.button');
+    $button.innerHTML = 'Restart';
+
+    $reloadWrap.appendChild($button);
+    $arenas.appendChild($reloadWrap);
+
+    $button.addEventListener('click', function (){
+        window.location.reload();
+    })
+}
+
+
 $randomButton.addEventListener('click', function () {
     console.log('####: Click GO Button');
-    changeHP(player1);
+
+    player1.changeHP(getRandom(20));
+    player2.changeHP(getRandom(20));
+
     console.log(player1.hp);
-    changeHP(player2);
     console.log(player2.hp);
 
+    player1.renderHP();
+    player2.renderHP();
+
+    if (player1.hp === 0 || player2.hp === 0) {
+        createReloadButton();
+        }
+        // $randomButton.style = 'display: none';
 
     if (player1.hp > 0 && player2.hp === 0) {
-        $arenas.appendChild(playerLose(player1.name));
-        $randomButton.disabled = true;
-        $randomButton.style = 'display: none';
-
+        $arenas.appendChild(playerWins(player1.name));
     } else if (player1.hp === 0 && player2.hp > 0) {
-        $arenas.appendChild(playerLose(player2.name));
-        $randomButton.disabled = true;
-        $randomButton.style = 'display: none';
+        $arenas.appendChild(playerWins(player2.name));
+    } else if (player1.hp === 0 && player2.hp === 0) {
+        $arenas.appendChild(playerWins());
     }
+
 })
 
 $arenas.appendChild(createPlayer(player1));
-$arenas.appendChild(createPlayer( player2));
+$arenas.appendChild(createPlayer(player2));
+
