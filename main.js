@@ -64,7 +64,7 @@ function getRandom(number) {
 }
 
 function changeHP(valueHP) {
-    this.hp -= getRandom(valueHP);
+    this.hp -= valueHP;
     if (this.hp <= 0) {
         this.hp = 0;
     }
