@@ -81,11 +81,11 @@ function changeHP(damage) {
 }
 
 function elHP() {
-    return document.querySelector('.player' + this.player + ' .life');
+    return document.querySelector(`player${this.player} .life`)
 }
 
 function renderHP() {
-    (this.elHP()).style.width = this.hp + '%';
+    (this.elHP()).style.width = `${this.hp}%`;
 }
 
 function createElement(tag, className) {
@@ -117,7 +117,6 @@ function createPlayer(playerObject) {
 
 function getRandom(number) {
     return Math.ceil(Math.random() * number);
-    // обязательно поставить округление в большую сторону, чтобы не было -1
 }
 
 function playerWins(name) {
@@ -147,8 +146,9 @@ $arenas.appendChild(createPlayer(player1));
 $arenas.appendChild(createPlayer(player2));
 
 function enemyAttack() {
-    const hit = ATTACK[getRandom(3) - 1];
-    const defence = ATTACK[getRandom(3) - 1];
+    const length = ATTACK.length;
+    const hit = ATTACK[getRandom(length) - 1];
+    const defence = ATTACK[getRandom(length) - 1];
 
     return {
         value: getRandom(HIT[hit]),
@@ -157,6 +157,10 @@ function enemyAttack() {
     }
 }
 
+/**
+ *
+ * @returns {{hit: string, defence: string, value: number}}
+ */
 function playerAttack() {
     const attack = {};
 
@@ -177,9 +181,11 @@ function playerAttack() {
 }
 
 function showResult() {
+
     if (player1.hp === 0 || player2.hp === 0) {
         createReloadButton();
     }
+
     if (player1.hp > 0 && player2.hp === 0) {
         $arenas.appendChild(playerWins(player1.name));
         generateLogs('end', player2, player1);
@@ -213,10 +219,8 @@ function generateLogs(type, player1, player2) {
     }
     console.log(whereText(type));
     const text = whereText(type);
-
-
     // const el = '<p>'+text+'</p>';
-    const el = `<p>${time + ' ' + text}</p>`;
+    const el = `<p>${time + ' ' + text + [player]}</p>`;
     $chat.insertAdjacentHTML('afterbegin', el);
 }
 
@@ -235,7 +239,7 @@ $formFight.addEventListener('submit', function (e){
     if (player.hit !== enemy.defence) {
         player1.changeHP(player.value);
         player1.renderHP();
-        generateLogs('hit',player2, player1);
+        generateLogs('hit', player2, player1);
     }
     else {
         generateLogs('defence', player2, player1);
