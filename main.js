@@ -6,11 +6,11 @@ const HIT = {
     head: 30,
     body: 25,
     foot: 20,
-}
+};
 
 const ATTACK = ['head', 'body', 'foot'];
 
-const logs = {
+const LOGS = {
     start: 'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
     end: [
         'Результат удара [playerWins]: [playerLose] - труп',
@@ -50,28 +50,35 @@ const logs = {
     draw: 'Ничья - это тоже победа!'
 };
 
+const IMG = {
+    SCORPION: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
+    KITANA: 'http://reactmarathon-api.herokuapp.com/assets/kitana.gif',
+    LIUKANG: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
+    SONYA: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif',
+    SUBZERO: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
+};
 
 const player1 = {
     player: 1,
-    name: 'Weekend',
+    name: 'SCORPION',
     hp: 100,
+    img: IMG['SCORPION'],
+    weapon: ['Sweet Voice'],
     changeHP,
     elHP,
     renderHP,
-    weapon: 'Sweet Voice',
-    img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
-}
+};
 
 const player2 = {
     player: 2,
-    name: 'Zar',
+    name: 'SUBZERO',
     hp: 100,
+    img: IMG['SUBZERO'],
+    weapon: ['Round videos in Telegram'],
     changeHP,
     elHP,
     renderHP,
-    weapon: 'Round videos in Telegram',
-    img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
-}
+};
 
 function changeHP(damage) {
     this.hp -= damage;
@@ -81,11 +88,15 @@ function changeHP(damage) {
 }
 
 function elHP() {
-    return document.querySelector(`player${this.player} .life`)
+    return document.querySelector('.player' + this.player + ' .life');
 }
 
 function renderHP() {
     (this.elHP()).style.width = `${this.hp}%`;
+}
+
+function getRandom(number) {
+    return Math.ceil(Math.random() * number);
 }
 
 function createElement(tag, className) {
@@ -97,14 +108,14 @@ function createElement(tag, className) {
 }
 
 function createPlayer(playerObject) {
-    const $player = createElement('div', 'player' + playerObject.player);
+    const $player = createElement('div',  `player${playerObject.player}`);
     const $progressbar = createElement('div', 'progressbar');
     const $character = createElement('div', 'character');
     const $life = createElement('div', 'life');
     const $name = createElement('div', 'name');
     const $img = createElement('img');
 
-    $life.style.width = playerObject.hp +'%';
+    $life.style.width = `${playerObject.hp}%`;
     $name.innerText = playerObject.name;
     $img.src = playerObject.img;
 
@@ -115,14 +126,10 @@ function createPlayer(playerObject) {
     return $player;
 }
 
-function getRandom(number) {
-    return Math.ceil(Math.random() * number);
-}
-
 function playerWins(name) {
     const $loseTitle = createElement('div', 'loseTitle');
     if (name) {
-        $loseTitle.innerText = name + ' Wins';
+        $loseTitle.innerText = `${name} Wins`;
     } else {
         $loseTitle.innerText = 'Draw';
     }
@@ -142,9 +149,6 @@ function createReloadButton() {
     $arenas.appendChild($reloadWrap);
 }
 
-$arenas.appendChild(createPlayer(player1));
-$arenas.appendChild(createPlayer(player2));
-
 function enemyAttack() {
     const length = ATTACK.length;
     const hit = ATTACK[getRandom(length) - 1];
@@ -157,31 +161,23 @@ function enemyAttack() {
     }
 }
 
-/**
- *
- * @returns {{hit: string, defence: string, value: number}}
- */
+
 function playerAttack() {
     const attack = {};
-
     for (let item of $formFight) {
         if (item.checked && item.name === 'hit') {
             attack.value = getRandom(HIT[item.value]);
             attack.hit = item.value;
         }
-
         if (item.checked && item.name === 'defence') {
             attack.defence = item.value;
         }
-
         item.checked = false;
     }
-
     return attack;
 }
 
 function showResult() {
-
     if (player1.hp === 0 || player2.hp === 0) {
         createReloadButton();
     }
@@ -189,16 +185,19 @@ function showResult() {
     if (player1.hp > 0 && player2.hp === 0) {
         $arenas.appendChild(playerWins(player1.name));
         generateLogs('end', player2, player1);
+
     } else if (player1.hp === 0 && player2.hp > 0) {
         $arenas.appendChild(playerWins(player2.name));
         generateLogs('end', player1, player2);
+
     } else if (player1.hp === 0 && player2.hp === 0) {
         $arenas.appendChild(playerWins());
         generateLogs('draw');
     }
 }
 
-function generateLogs(type, player1, player2) {
+function generateLogs(type, player1, player2, damage = 0) {
+
     const date = new Date;
     const normalize = (num) => (num.toString().length > 1 ? num: `0${num}`);
     const time = `${normalize(date.getHours())}:${normalize(date.getMinutes())}:${normalize(date.getSeconds())}`;
@@ -206,28 +205,34 @@ function generateLogs(type, player1, player2) {
     function whereText(type) {
         switch (type) {
             case 'start':
-                return logs[type].replace('[time]', time).replace('[player1]', player1.name).replace('[player2]', player2.name);
+                return LOGS[type]
+                    .replace('[time]', time)
+                    .replace('[player1]', player1.name)
+                    .replace('[player2]', player2.name);
             case 'end':
-                return logs[type][getRandom(logs[type].length) - 1].replace('[playerLose]', player1.name).replace('[playerWins]', player2.name);
+                return `${time} - ${LOGS[type][getRandom(LOGS[type].length) - 1]}`
+                    .replace('[playerLose]', player1.name)
+                    .replace('[playerWins]', player2.name);
             case 'hit':
-                return logs[type][getRandom(logs[type].length) - 1].replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name);
+                return `${time} - ${LOGS[type][getRandom(LOGS[type].length) - 1]}  [${damage}xp]  [${player2.hp}/100]`
+                    .replace('[playerKick]', player1.name)
+                    .replace('[playerDefence]', player2.name);
             case 'defence':
-                return logs[type][getRandom(logs[type].length) - 1].replace('[playerKick]', player1.name).replace('[playerDefence]', player2.name);
+                return `${time} - ${LOGS[type][getRandom(LOGS[type].length) - 1]}  [${damage}xp]  [${player2.hp}/100]`
+                    .replace('[playerKick]', player1.name)
+                    .replace('[playerDefence]', player2.name);
             case 'draw':
-                return logs[type];
+                return `${time} - ${LOGS[type]}`;
         }
     }
-    console.log(whereText(type));
-    const text = whereText(type);
-    // const el = '<p>'+text+'</p>';
-    const el = `<p>${time + ' ' + text + [player]}</p>`;
-    $chat.insertAdjacentHTML('afterbegin', el);
+
+    const logMessage = whereText(type);
+    $chat.insertAdjacentHTML('afterbegin', `<p>${logMessage}</p>`);
 }
 
 $formFight.addEventListener('submit', function (e){
 
     console.log('####: Click GO Button');
-    // generateLogs('start', player1, player2);
 
     e.preventDefault();
     const enemy = enemyAttack();
@@ -239,7 +244,7 @@ $formFight.addEventListener('submit', function (e){
     if (player.hit !== enemy.defence) {
         player1.changeHP(player.value);
         player1.renderHP();
-        generateLogs('hit', player2, player1);
+        generateLogs('hit', player2, player1, player.value);
     }
     else {
         generateLogs('defence', player2, player1);
@@ -248,17 +253,17 @@ $formFight.addEventListener('submit', function (e){
     if (player.defence !== enemy.hit) {
         player2.changeHP(enemy.value);
         player2.renderHP();
-        generateLogs('hit',player1, player2);
+        generateLogs('hit',player1, player2, enemy.value);
     }
 
     else {
         generateLogs('defence', player1, player2);
     }
 
-    console.log(player1.hp);
-    console.log(player2.hp);
-
     showResult();
 
 })
 
+$arenas.appendChild(createPlayer(player1));
+$arenas.appendChild(createPlayer(player2));
+generateLogs('start', player1, player2);
