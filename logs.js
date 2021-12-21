@@ -1,4 +1,12 @@
-const logs = {
+export const HIT = {
+    head: 30,
+    body: 25,
+    foot: 20,
+};
+
+export const ATTACK = ['head', 'body', 'foot'];
+
+export const LOGS = {
     start: 'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
     end: [
         'Результат удара [playerWins]: [playerLose] - труп',
@@ -36,4 +44,34 @@ const logs = {
         '[playerKick] обманулся и жестокий [playerDefence] блокировал удар стопой в солнечное сплетение.'
     ],
     draw: 'Ничья - это тоже победа!'
+};
+
+export const IMG = {
+    SCORPION: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
+    KITANA: 'http://reactmarathon-api.herokuapp.com/assets/kitana.gif',
+    LIUKANG: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
+    SONYA: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif',
+    SUBZERO: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
+};
+
+export const player1 = {
+    player: 1,
+    name: 'SCORPION',
+    hp: 100,
+    img: IMG['SCORPION'],
+    weapon: ['Sweet Voice'],
+    changeHP,
+    elHP,
+    renderHP,
+};
+
+export const player2 = {
+    player: 2,
+    name: 'SUBZERO',
+    hp: 100,
+    img: IMG['SUBZERO'],
+    weapon: ['Round videos in Telegram'],
+    changeHP,
+    elHP,
+    renderHP,
 };
