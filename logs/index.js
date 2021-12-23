@@ -1,12 +1,8 @@
-export const HIT = {
-    head: 30,
-    body: 25,
-    foot: 20,
-};
+import {getRandom, getTime} from "../utils";
+import {createChatText} from "../game/layout";
 
-export const ATTACK = ['head', 'body', 'foot'];
 
-export const LOGS = {
+const LOGS = {
     start: 'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
     end: [
         'Результат удара [playerWins]: [playerLose] - труп',
@@ -46,10 +42,45 @@ export const LOGS = {
     draw: 'Ничья - это тоже победа!'
 };
 
-export const IMG = {
-    SCORPION: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
-    KITANA: 'http://reactmarathon-api.herokuapp.com/assets/kitana.gif',
-    LIUKANG: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
-    SONYA: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif',
-    SUBZERO: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
-};
+export const getTextLog = (type, playerName1, playerName2) => {
+    switch (type) {
+        case 'start':
+            return LOGS[type]
+                .replace('[time]', getTime())
+                .replace('[player1]', playerName1)
+                .replace('[player2]', playerName2);
+        case 'end':
+            return LOGS[type][getRandom(LOGS[type].length) - 1]
+                .replace('[playerLose]', playerName1)
+                .replace('[playerWins]', playerName2);
+        case 'hit':
+            return LOGS[type][getRandom(LOGS[type].length) - 1]
+                .replace('[playerKick]', playerName1)
+                .replace('[playerDefence]', playerName2);
+        case 'defence':
+            return LOGS[type][getRandom(LOGS[type].length) - 1]
+                .replace('[playerKick]', playerName1)
+                .replace('[playerDefence]', playerName2);
+        case 'draw':
+            return LOGS[type];
+    }
+}
+
+export const generateLogs = (type, {name: playerName1} = {}, {name: playerName2, hp} = {}, valueAttack = 0) => {
+
+    let text = getTextLog(type, playerName1, playerName2);
+
+    switch (type) {
+        case 'start':
+            break;
+        case 'hit':
+        case 'defence':
+            text = `${getTime()} ${text} -${valueAttack}hp [${hp}/100]`;
+            break;
+        case 'end':
+        case 'draw':
+            text = `${getTime()} ${text}`;
+            break;
+    }
+    createChatText(text);
+}
