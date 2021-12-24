@@ -1,7 +1,3 @@
-const $arenas = document.querySelector('.arenas');
-const $formFight = document.querySelector('.control');
-const $chat = document.querySelector('.chat');
-
 const HIT = {
     head: 30,
     body: 25,
@@ -58,6 +54,11 @@ const IMG = {
     SUBZERO: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
 };
 
+const $arenas = document.querySelector('.arenas');
+const $formFight = document.querySelector('.control');
+const $chat = document.querySelector('.chat');
+
+
 const player1 = {
     player: 1,
     name: 'SCORPION',
@@ -80,15 +81,15 @@ const player2 = {
     renderHP,
 };
 
-function changeHP(damage) {
-    this.hp -= damage;
+function changeHP(randomNumber) {
+    this.hp -= randomNumber;
     if (this.hp <= 0) {
         this.hp = 0;
     }
 }
 
 function elHP() {
-    return document.querySelector('.player' + this.player + ' .life');
+    return document.querySelector(`.player${this.player} .life`);
 }
 
 function renderHP() {
@@ -107,17 +108,20 @@ function createElement(tag, className) {
     return $tag
 }
 
-function createPlayer(playerObject) {
-    const $player = createElement('div',  `player${playerObject.player}`);
+
+function createPlayer({ name, player, hp, img}) {
+    const $player = createElement('div',  `player${player}`);
+
     const $progressbar = createElement('div', 'progressbar');
     const $character = createElement('div', 'character');
     const $life = createElement('div', 'life');
     const $name = createElement('div', 'name');
     const $img = createElement('img');
 
-    $life.style.width = `${playerObject.hp}%`;
-    $name.innerText = playerObject.name;
-    $img.src = playerObject.img;
+    $life.style.width = `${hp}%`;
+    $name.innerText = name;
+    $img.src = img;
+
 
     $progressbar.append($name,$life);
     $character.appendChild($img);
@@ -126,7 +130,9 @@ function createPlayer(playerObject) {
     return $player;
 }
 
-function playerWins(name) {
+
+function playerLose(name) {
+
     const $loseTitle = createElement('div', 'loseTitle');
     if (name) {
         $loseTitle.innerText = `${name} Wins`;
@@ -137,22 +143,21 @@ function playerWins(name) {
 }
 
 function createReloadButton() {
-    const $reloadWrap = createElement('div','reloadWrap');
-    const $reloadButton = document.querySelector('.button');
-    $reloadButton.innerHTML = 'Restart';
+    const $reloadButtonDiv = createElement('div','reloadWrap');
+    const $reloadButton = createElement('button', 'button');
+    $reloadButton.innerHTML = 'Reload';
 
     $reloadButton.addEventListener('click', function (){
         window.location.reload();
     })
 
-    $reloadWrap.appendChild($reloadButton);
-    $arenas.appendChild($reloadWrap);
+    $reloadButtonDiv.appendChild($reloadButton);
+    $arenas.appendChild($reloadButtonDiv);
 }
 
 function enemyAttack() {
-    const length = ATTACK.length;
-    const hit = ATTACK[getRandom(length) - 1];
-    const defence = ATTACK[getRandom(length) - 1];
+    const hit = ATTACK[getRandom(ATTACK.length) - 1];
+    const defence = ATTACK[getRandom(ATTACK.length) - 1];
 
     return {
         value: getRandom(HIT[hit]),
@@ -178,56 +183,80 @@ function playerAttack() {
 }
 
 function showResult() {
-    if (player1.hp === 0 || player2.hp === 0) {
+
+    const {name: playerName1, hp: hp1} = player1;
+    const {name: playerName2, hp: hp2} = player2;
+
+    if (hp1 === 0 || hp2 === 0) {
+
         createReloadButton();
     }
 
-    if (player1.hp > 0 && player2.hp === 0) {
-        $arenas.appendChild(playerWins(player1.name));
+    if (hp1 > 0 && hp2 === 0) {
+        $arenas.appendChild(playerLose(playerName1));
         generateLogs('end', player2, player1);
 
-    } else if (player1.hp === 0 && player2.hp > 0) {
-        $arenas.appendChild(playerWins(player2.name));
+
+    } else if (hp1 === 0 && hp2 > 0) {
+        $arenas.appendChild(playerLose(playerName2));
         generateLogs('end', player1, player2);
 
-    } else if (player1.hp === 0 && player2.hp === 0) {
-        $arenas.appendChild(playerWins());
+    } else if (hp1 === 0 && hp2 === 0) {
+        $arenas.appendChild(playerLose());
+
         generateLogs('draw');
     }
 }
 
-function generateLogs(type, player1, player2, damage = 0) {
 
+function getTime() {
     const date = new Date;
     const normalize = (num) => (num.toString().length > 1 ? num: `0${num}`);
-    const time = `${normalize(date.getHours())}:${normalize(date.getMinutes())}:${normalize(date.getSeconds())}`;
+    return `${normalize(date.getHours())}:${normalize(date.getMinutes())}:${normalize(date.getSeconds())}`;
+}
 
-    function whereText(type) {
-        switch (type) {
-            case 'start':
-                return LOGS[type]
-                    .replace('[time]', time)
-                    .replace('[player1]', player1.name)
-                    .replace('[player2]', player2.name);
-            case 'end':
-                return `${time} - ${LOGS[type][getRandom(LOGS[type].length) - 1]}`
-                    .replace('[playerLose]', player1.name)
-                    .replace('[playerWins]', player2.name);
-            case 'hit':
-                return `${time} - ${LOGS[type][getRandom(LOGS[type].length) - 1]}  [${damage}xp]  [${player2.hp}/100]`
-                    .replace('[playerKick]', player1.name)
-                    .replace('[playerDefence]', player2.name);
-            case 'defence':
-                return `${time} - ${LOGS[type][getRandom(LOGS[type].length) - 1]}  [${damage}xp]  [${player2.hp}/100]`
-                    .replace('[playerKick]', player1.name)
-                    .replace('[playerDefence]', player2.name);
-            case 'draw':
-                return `${time} - ${LOGS[type]}`;
-        }
+function getTextLog(type, playerName1, playerName2) {
+    switch (type) {
+        case 'start':
+            return LOGS[type]
+                .replace('[time]', getTime())
+                .replace('[player1]', playerName1)
+                .replace('[player2]', playerName2);
+        case 'end':
+            return LOGS[type][getRandom(LOGS[type].length) - 1]
+                .replace('[playerLose]', playerName1)
+                .replace('[playerWins]', playerName2);
+        case 'hit':
+            return LOGS[type][getRandom(LOGS[type].length) - 1]
+                .replace('[playerKick]', playerName1)
+                .replace('[playerDefence]', playerName2);
+        case 'defence':
+            return LOGS[type][getRandom(LOGS[type].length) - 1]
+                .replace('[playerKick]', playerName1)
+                .replace('[playerDefence]', playerName2);
+        case 'draw':
+            return LOGS[type];
     }
+}
 
-    const logMessage = whereText(type);
-    $chat.insertAdjacentHTML('afterbegin', `<p>${logMessage}</p>`);
+function generateLogs(type, {name: playerName1} = {}, {name: playerName2, hp} = {}, valueAttack = 0) {
+
+    let text = getTextLog(type, playerName1, playerName2);
+
+    switch (type) {
+        case 'start':
+            break;
+        case 'hit':
+        case 'defence':
+            text = `${getTime()} ${text} -${valueAttack}hp [${hp}/100]`;
+            break;
+        case 'end':
+        case 'draw':
+            text = `${getTime()} ${text}`;
+            break;
+    }
+    $chat.insertAdjacentHTML('afterbegin', `<p>${text}</p>`);
+
 }
 
 $formFight.addEventListener('submit', function (e){
@@ -235,35 +264,39 @@ $formFight.addEventListener('submit', function (e){
     console.log('####: Click GO Button');
 
     e.preventDefault();
-    const enemy = enemyAttack();
-    const player = playerAttack();
+    const {hit: hitEnemy, defence: defenceEnemy, value: valueEnemy} = enemyAttack();
+    const {hit, defence, value} = playerAttack();
 
-    console.log('####: a', player);
-    console.log('####: e', enemy);
-
-    if (player.hit !== enemy.defence) {
-        player1.changeHP(player.value);
+    if (defence !== hitEnemy) {
+        player1.changeHP(valueEnemy);
         player1.renderHP();
-        generateLogs('hit', player2, player1, player.value);
+
+        generateLogs('hit',player2, player1, valueEnemy);
+
     }
     else {
         generateLogs('defence', player2, player1);
     }
 
-    if (player.defence !== enemy.hit) {
-        player2.changeHP(enemy.value);
+    if (hit !== defenceEnemy) {
+        player2.changeHP(value);
         player2.renderHP();
-        generateLogs('hit',player1, player2, enemy.value);
-    }
 
+        generateLogs('hit', player1, player2, value);
+
+    }
     else {
         generateLogs('defence', player1, player2);
     }
 
     showResult();
-
 })
 
-$arenas.appendChild(createPlayer(player1));
-$arenas.appendChild(createPlayer(player2));
-generateLogs('start', player1, player2);
+
+function init() {
+    $arenas.appendChild(createPlayer(player1));
+    $arenas.appendChild(createPlayer(player2));
+    generateLogs('start', player1, player2);
+}
+
+init();
