@@ -54,10 +54,10 @@ const IMG = {
     SUBZERO: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
 };
 
-
 const $arenas = document.querySelector('.arenas');
 const $formFight = document.querySelector('.control');
 const $chat = document.querySelector('.chat');
+
 
 const player1 = {
     player: 1,
@@ -108,8 +108,10 @@ function createElement(tag, className) {
     return $tag
 }
 
+
 function createPlayer({ name, player, hp, img}) {
     const $player = createElement('div',  `player${player}`);
+
     const $progressbar = createElement('div', 'progressbar');
     const $character = createElement('div', 'character');
     const $life = createElement('div', 'life');
@@ -120,6 +122,7 @@ function createPlayer({ name, player, hp, img}) {
     $name.innerText = name;
     $img.src = img;
 
+
     $progressbar.append($name,$life);
     $character.appendChild($img);
     $player.append($progressbar, $character);
@@ -127,7 +130,9 @@ function createPlayer({ name, player, hp, img}) {
     return $player;
 }
 
+
 function playerLose(name) {
+
     const $loseTitle = createElement('div', 'loseTitle');
     if (name) {
         $loseTitle.innerText = `${name} Wins`;
@@ -161,9 +166,9 @@ function enemyAttack() {
     }
 }
 
+
 function playerAttack() {
     const attack = {};
-
     for (let item of $formFight) {
         if (item.checked && item.name === 'hit') {
             attack.value = getRandom(HIT[item.value]);
@@ -178,10 +183,12 @@ function playerAttack() {
 }
 
 function showResult() {
+
     const {name: playerName1, hp: hp1} = player1;
     const {name: playerName2, hp: hp2} = player2;
 
     if (hp1 === 0 || hp2 === 0) {
+
         createReloadButton();
     }
 
@@ -189,15 +196,18 @@ function showResult() {
         $arenas.appendChild(playerLose(playerName1));
         generateLogs('end', player2, player1);
 
+
     } else if (hp1 === 0 && hp2 > 0) {
         $arenas.appendChild(playerLose(playerName2));
         generateLogs('end', player1, player2);
 
     } else if (hp1 === 0 && hp2 === 0) {
         $arenas.appendChild(playerLose());
+
         generateLogs('draw');
     }
 }
+
 
 function getTime() {
     const date = new Date;
@@ -246,6 +256,7 @@ function generateLogs(type, {name: playerName1} = {}, {name: playerName2, hp} = 
             break;
     }
     $chat.insertAdjacentHTML('afterbegin', `<p>${text}</p>`);
+
 }
 
 $formFight.addEventListener('submit', function (e){
@@ -259,7 +270,9 @@ $formFight.addEventListener('submit', function (e){
     if (defence !== hitEnemy) {
         player1.changeHP(valueEnemy);
         player1.renderHP();
+
         generateLogs('hit',player2, player1, valueEnemy);
+
     }
     else {
         generateLogs('defence', player2, player1);
@@ -268,13 +281,17 @@ $formFight.addEventListener('submit', function (e){
     if (hit !== defenceEnemy) {
         player2.changeHP(value);
         player2.renderHP();
+
         generateLogs('hit', player1, player2, value);
+
     }
     else {
         generateLogs('defence', player1, player2);
     }
+
     showResult();
 })
+
 
 function init() {
     $arenas.appendChild(createPlayer(player1));
