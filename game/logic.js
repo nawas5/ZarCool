@@ -2,7 +2,6 @@ import {ATTACK, HIT} from '../constants/index.js';
 import {getRandom} from '../utils/index.js';
 import {generateLogs} from '../logs/index.js';
 
-const $formFight = document.querySelector('.control .button');
 
 const enemyAttack = () => {
     const hit = ATTACK[getRandom(ATTACK.length) - 1];
@@ -31,25 +30,25 @@ const playerAttack = ($formFight) => {
     return attack;
 }
 
-export const gameAffect = (player1, player2) => {
+export const gameAffect = ($formFight, $chat, player1, player2) => {
     const {hit: hitEnemy, defence: defenceEnemy, value: valueEnemy} = enemyAttack();
     const {hit, defence, value} = playerAttack($formFight);
 
     if (defence !== hitEnemy) {
         player1.changeHP(valueEnemy);
         player1.renderHP();
-        generateLogs('hit',player2, player1, valueEnemy);
+        generateLogs($chat,'hit',player2, player1, valueEnemy);
     }
     else {
-        generateLogs('defence', player2, player1);
+        generateLogs($chat,'defence', player2, player1);
     }
 
     if (hit !== defenceEnemy) {
         player2.changeHP(value);
         player2.renderHP();
-        generateLogs('hit', player1, player2, value);
+        generateLogs($chat,'hit', player1, player2, value);
     }
     else {
-        generateLogs('defence', player1, player2);
+        generateLogs($chat,'defence', player1, player2);
     }
 }

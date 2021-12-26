@@ -4,20 +4,20 @@ import {generateLogs} from './logs/index.js';
 import {renderPlayer, showResult} from './game/layout.js';
 
 const init = () => {
-    const $formFight = document.querySelector('.control .button');
+    const $arenas = document.querySelector('.arenas');
+    const $chat = document.querySelector('.chat');
+    const $formFight = document.querySelector('.control');
     $formFight.addEventListener('submit', function (e){
         console.log('####: Click GO Button');
         e.preventDefault();
-        gameAffect(player1, player2);
-        showResult(player1, player2);
+        gameAffect($formFight, $chat, player1, player2);
+        showResult($arenas, $chat, player1, player2);
     })
 
-    renderPlayer(player1);
-    renderPlayer(player2);
-    generateLogs('start', player1, player2);
+    renderPlayer($arenas, player1);
+    renderPlayer($arenas, player2);
+    generateLogs($chat, 'start', player1, player2);
 }
 
 init();
 
-export class $formFight {
-}

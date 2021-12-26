@@ -1,10 +1,7 @@
 import {createElement} from '../utils/index.js';
 import {generateLogs} from '../logs/index.js';
 
-const $arenas = document.querySelector('.arenas');
-const $chat = document.querySelector('.chat');
-
-const createPlayer = ({ name, player, hp, img}) => {
+const createPlayer = ({ player, name, hp, img}) => {
     const $player = createElement('div',  `player${player}`);
     const $progressbar = createElement('div', 'progressbar');
     const $character = createElement('div', 'character');
@@ -43,36 +40,36 @@ const createReloadButton = () => {
     })
 
     $reloadButtonDiv.appendChild($reloadButton);
-    $arenas.appendChild($reloadButtonDiv);
+    return $reloadButtonDiv;
 }
 
-export const showResult = (player1, player2) => {
+export const showResult = ($arenas, $chat, player1, player2) => {
     const {name: playerName1, hp: hp1} = player1;
     const {name: playerName2, hp: hp2} = player2;
 
     if (hp1 === 0 || hp2 === 0) {
-        createReloadButton();
+        $arenas.appendChild(createReloadButton());
     }
 
     if (hp1 > 0 && hp2 === 0) {
         $arenas.appendChild(playerLose(playerName1));
-        generateLogs('end', player2, player1);
+        generateLogs($chat,'end', player2, player1);
 
     } else if (hp1 === 0 && hp2 > 0) {
         $arenas.appendChild(playerLose(playerName2));
-        generateLogs('end', player1, player2);
+        generateLogs($chat,'end', player1, player2);
 
     } else if (hp1 === 0 && hp2 === 0) {
         $arenas.appendChild(playerLose());
-        generateLogs('draw');
+        generateLogs($chat,'draw');
     }
 }
 
 
-export const createChatText = (text) => {
+export const createChatText = ($chat, text) => {
     $chat.insertAdjacentHTML('afterbegin', `<p>${text}</p>`);
 }
 
-export const renderPlayer = (player) => {
+export const renderPlayer = ($arenas, player) => {
     $arenas.appendChild(createPlayer(player));
 }

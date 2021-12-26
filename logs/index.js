@@ -66,7 +66,7 @@ export const getTextLog = (type, playerName1, playerName2) => {
     }
 }
 
-export const generateLogs = (type, {name: playerName1} = {}, {name: playerName2, hp} = {}, valueAttack = 0) => {
+export const generateLogs = ($chat, type, {name: playerName1} = {}, {name: playerName2, hp} = {}, valueAttack = 0) => {
 
     let text = getTextLog(type, playerName1, playerName2);
 
@@ -82,5 +82,5 @@ export const generateLogs = (type, {name: playerName1} = {}, {name: playerName2,
             text = `${getTime()} ${text}`;
             break;
     }
-    createChatText(text);
+    createChatText($chat, text);
 }
