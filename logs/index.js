@@ -42,6 +42,13 @@ const LOGS = {
     draw: 'Ничья - это тоже победа!'
 };
 
+/**
+ *
+ * @param {string} type
+ * @param {string} playerName1
+ * @param {string} playerName2
+ * @returns {string} LOGS
+ */
 export const getTextLog = (type, playerName1, playerName2) => {
     switch (type) {
         case 'start':
@@ -66,6 +73,15 @@ export const getTextLog = (type, playerName1, playerName2) => {
     }
 }
 
+/**
+ *
+ * @param $chat
+ * @param {string} type
+ * @param {string} playerName1
+ * @param {string} playerName2
+ * @param {number} hp
+ * @param {number} valueAttack
+ */
 export const generateLogs = ($chat, type, {name: playerName1} = {}, {name: playerName2, hp} = {}, valueAttack = 0) => {
 
     let text = getTextLog(type, playerName1, playerName2);

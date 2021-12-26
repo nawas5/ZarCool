@@ -20,13 +20,9 @@ const createPlayer = ({ player, name, hp, img}) => {
     return $player;
 }
 
-const playerLose = ({name: playerName}) => {
+const playerLose = (playerName) => {
     const $loseTitle = createElement('div', 'loseTitle');
-    if (playerName) {
-        $loseTitle.innerText = `${playerName} Wins`;
-    } else {
-        $loseTitle.innerText = 'Draw';
-    }
+    $loseTitle.innerText = playerName ? `${playerName} Wins` : 'Draw';
     return $loseTitle;
 }
 
