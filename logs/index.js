@@ -1,5 +1,5 @@
-import {getRandom, getTime} from "../utils";
-import {createChatText} from "../game/layout";
+import {getRandom, getTime} from '../utils/index.js';
+import {createChatText} from '../game/layout.js';
 
 
 const LOGS = {

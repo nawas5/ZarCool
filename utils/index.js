@@ -13,5 +13,3 @@ export const createElement = (tag, className) => {
     }
     return $tag
 }
-
-export const createDiv = (className) => createElement('div', className);

@@ -1,11 +1,10 @@
-import {gameAffect} from "./game/logic.js";
-import {renderPlayer, showResult} from "./game/layout.js";
-import {player1, player2} from "./players";
-import {generateLogs} from "./logs";
+import {gameAffect} from './game/logic.js';
+import {player1, player2} from './players/index.js';
+import {generateLogs} from './logs/index.js';
+import {renderPlayer, showResult} from './game/layout.js';
 
 const init = () => {
     const $formFight = document.querySelector('.control .button');
-
     $formFight.addEventListener('submit', function (e){
         console.log('####: Click GO Button');
         e.preventDefault();
@@ -19,3 +18,6 @@ const init = () => {
 }
 
 init();
+
+export class $formFight {
+}

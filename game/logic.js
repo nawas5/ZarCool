@@ -1,8 +1,8 @@
-import {ATTACK, HIT} from "../constants";
-import {getRandom} from "../utils";
-import {$formFight} from "./layout";
-import {generateLogs} from "../logs";
+import {ATTACK, HIT} from '../constants/index.js';
+import {getRandom} from '../utils/index.js';
+import {generateLogs} from '../logs/index.js';
 
+const $formFight = document.querySelector('.control .button');
 
 const enemyAttack = () => {
     const hit = ATTACK[getRandom(ATTACK.length) - 1];
@@ -15,7 +15,7 @@ const enemyAttack = () => {
     }
 }
 
-const playerAttack = () => {
+const playerAttack = ($formFight) => {
     const attack = {};
 
     for (let item of $formFight) {
@@ -33,7 +33,7 @@ const playerAttack = () => {
 
 export const gameAffect = (player1, player2) => {
     const {hit: hitEnemy, defence: defenceEnemy, value: valueEnemy} = enemyAttack();
-    const {hit, defence, value} = playerAttack();
+    const {hit, defence, value} = playerAttack($formFight);
 
     if (defence !== hitEnemy) {
         player1.changeHP(valueEnemy);

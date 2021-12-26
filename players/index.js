@@ -1,5 +1,3 @@
-
-
 const IMG = {
     SCORPION: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
     KITANA: 'http://reactmarathon-api.herokuapp.com/assets/kitana.gif',

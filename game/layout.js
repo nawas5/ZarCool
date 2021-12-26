@@ -1,5 +1,6 @@
-import {createElement} from "../utils";
-import {generateLogs} from "../logs";
+import {createElement} from '../utils/index.js';
+import {generateLogs} from '../logs/index.js';
+
 const $arenas = document.querySelector('.arenas');
 const $chat = document.querySelector('.chat');
 
@@ -32,6 +33,19 @@ const playerLose = ({name: playerName}) => {
     return $loseTitle;
 }
 
+const createReloadButton = () => {
+    const $reloadButtonDiv = createElement('div','reloadWrap');
+    const $reloadButton = createElement('button', 'button');
+    $reloadButton.innerHTML = 'Reload';
+
+    $reloadButton.addEventListener('click', function (){
+        window.location.reload();
+    })
+
+    $reloadButtonDiv.appendChild($reloadButton);
+    $arenas.appendChild($reloadButtonDiv);
+}
+
 export const showResult = (player1, player2) => {
     const {name: playerName1, hp: hp1} = player1;
     const {name: playerName2, hp: hp2} = player2;
@@ -54,22 +68,11 @@ export const showResult = (player1, player2) => {
     }
 }
 
-const createReloadButton = () => {
-    const $reloadButtonDiv = createElement('div','reloadWrap');
-    const $reloadButton = createElement('button', 'button');
-    $reloadButton.innerHTML = 'Reload';
-
-    $reloadButton.addEventListener('click', function (){
-        window.location.reload();
-    })
-
-    $reloadButtonDiv.appendChild($reloadButton);
-    $arenas.appendChild($reloadButtonDiv);
-}
 
 export const createChatText = (text) => {
     $chat.insertAdjacentHTML('afterbegin', `<p>${text}</p>`);
 }
+
 export const renderPlayer = (player) => {
     $arenas.appendChild(createPlayer(player));
 }
